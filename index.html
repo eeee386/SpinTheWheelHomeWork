@@ -38,14 +38,42 @@
             </div>
         </div>
     </div>
-    <div class="field">
-        <div class="control">
-            <button id="submit-button" class="button is-link">Submit</button>
+    <div id="buttonWrapper">
+        <div class="field">
+            <div class="control">
+                <button id="submit-button" class="button is-link">Submit</button>
+            </div>
         </div>
     </div>
 </form>
 </body>
 <script>
+    function createErrorMessage(message, id, elementToAppendTo){
+        if(!document.getElementById("colorSelectError")) {
+            const errorMessage = document.createElement("p");
+            errorMessage.id = id
+            errorMessage.classList.add("help");
+            errorMessage.classList.add("is-danger");
+            errorMessage.innerText = message;
+            elementToAppendTo.appendChild(errorMessage);
+        }
+    }
+
+    function removeErrorMessage(id, elementToRemoveFrom){
+        const errorMessage = document.getElementById(id);
+        if(errorMessage){
+            elementToRemoveFrom.removeChild(errorMessage);
+        }
+    }
+
+    function isAllOrNoneOfTheColorButtonInputSet() {
+        const vals = Array.from(document.getElementsByClassName("colorButtonInput"))
+            .reduce((acc, curr) => {
+                return [acc[0] || !!curr.value, acc[1] && !!curr.value]
+            }, [false, true])
+        return vals[0] === vals[1]
+    }
+
     validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
     const form = document.getElementById("setupForm");
     const colorSelectWrapper = document.getElementById("colorSelectWrapper");
@@ -59,39 +87,44 @@
         wrapper.id = "colorWrapper";
         const numberOfColorsValue = e.target.value;
         for(let i = 0; i < parseInt(numberOfColorsValue); i++){
-            const input = document.createElement("div");
-            input.id = validColors[i];
-            input.classList.add("field");
-            input.innerHTML = `<label class="label">${validColors[i]}</label>
+            const field = document.createElement("div");
+            field.id = validColors[i];
+            field.classList.add("field");
+            field.innerHTML = `<label class="label">${validColors[i]}</label>
                                  <div class="control">
-                                   <input class="input" type="text">
+                                   <input id="${validColors[i]}Input" class="input colorButtonInput" type="text">
                                </div>`
-            input.addEventListener("change", function (e){
-                let errorMessage = document.getElementById(`errorMessage${validColors[i]}`);
-                if (e.target.value.length !== 1){
-                    if(!errorMessage){
-                        errorMessage = document.createElement("p");
-                        errorMessage.id = `errorMessage${validColors[i]}`
-                        errorMessage.classList.add("help");
-                        errorMessage.classList.add("is-danger");
-                        errorMessage.innerText = "Choose only one letter"
-                        input.appendChild(errorMessage);
-                    }
 
+            field.addEventListener("change", function (e){
+                let errorId = `errorMessage${validColors[i]}`;
+                if (e.target.value.length > 1){
+                    createErrorMessage("Choose only one or no letters", errorId, field);
                 } else {
-                    if (errorMessage){
-                        input.removeChild(errorMessage);
-                    }
+                    removeErrorMessage(errorId, field)
                 }
             })
-            wrapper.appendChild(input);
+            wrapper.appendChild(field);
         }
         colorSelectWrapper.appendChild(wrapper);
     })
 
     const button = document.getElementById("submit-button");
-    button.addEventListener("click", function (){
+    const buttonWrapper = document.getElementById("buttonWrapper");
+    button.addEventListener("click", function (e){
+        e.preventDefault();
+        const numberOfColorInput = document.getElementById("numberOfColorInput");
+        const colorSelectorErrorId = "colorSelectError";
+        const setAllOrNoneErrorId = "setAllOrNoneError";
+        if(numberOfColorInput.value === "0"){
+            createErrorMessage("You should choose how many colors you want", colorSelectorErrorId, buttonWrapper);
+            return;
+        } else if(!isAllOrNoneOfTheColorButtonInputSet()){
+            createErrorMessage("Either set all of the buttons or don't set any of them", setAllOrNoneErrorId, buttonWrapper);
+            return;
+        } else {
 
+        }
+        callThis();
     });
 
 </script>
