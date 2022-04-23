@@ -30,6 +30,11 @@ function createWheel(numberOfColors){
     centerWheel.id = "centerWheel";
     wheel.id = "wheel";
     gameArea.appendChild(wheel);
+    // Create a full height pole for every color
+    // Position them so that it would slice the wheel in half
+    // Rotate them in the right angle
+    // Add the child div (half the height of the pole)
+    // color child div
     for(let i = 0; i < numberOfColors; i++){
         const color = validColors[i]
         const slice = document.createElement("div");

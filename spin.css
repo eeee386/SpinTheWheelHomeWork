@@ -41,8 +41,8 @@ body{
     position:relative;
     width: var(--centerWheelDiameter);
     height: var(--centerWheelDiameter);
-    top: calc(var(--height) - var(--centerWheelDiameter));
-    left: calc((var(--width)) / 2 - (var(--centerWheelDiameter) / 2))
+    top: calc((var(--wheelDiameter) / 2) - (var(--centerWheelDiameter) / 2) );
+    left: calc((var(--wheelDiameter)) / 2 - (var(--centerWheelDiameter) / 2))
 }
 
 .slice {
