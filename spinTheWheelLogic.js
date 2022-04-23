@@ -6,6 +6,7 @@ let gate = null;
 let centerWheel = null;
 let balls = [];
 let scoreText = null;
+let endText = null;
 
 // Gamehelper variables
 let activeColor = null;
@@ -17,6 +18,10 @@ let score =0;
 let keybindings = null;
 let isEnd = false;
 
+//https://www.pentarem.com/blog/how-to-use-settimeout-with-async-await-in-javascript/
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
@@ -36,9 +41,7 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
     document.addEventListener("keydown", function (e){
         handleKeyPress(e);
     });
-    if(!isEnd){
-        setInterval(createBalls, 3000);
-    }
+    setInterval(createBalls, 3000);
 }
 
 function createGameArea() {
@@ -90,13 +93,25 @@ function createScore() {
     scoreText.innerText = score;
 }
 
-function createBalls() {
+function writeOutEnd(){
+    endText = document.createElement("div");
+    endText.id = "end";
+    gameArea.appendChild(endText)
+    endText.innerText = "Game over!";
+
+}
+
+async function createBalls() {
+    if(isEnd){
+        return;
+    }
     const ball = document.createElement("div");
     ball.classList.add("ball");
     ball.style.backgroundColor = getColorForBalls().toLowerCase();
     // Here we use that the body has no padding or margin
     const gateRect = gate.getBoundingClientRect();
     gameArea.appendChild(ball);
+    balls.push(ball);
     const ballRect = ball.getBoundingClientRect();
     const move = [
         {top: "0px"},
@@ -108,19 +123,19 @@ function createBalls() {
     }
     console.log(ballRect);
     ball.animate(move, timing);
-    setTimeout(function (){
-        if(ball.style.backgroundColor === activeColor.toLowerCase()){
-            score += 1;
-            createScore();
-            gameArea.removeChild(ball);
-        } else {
-            isEnd = true;
-            balls.forEach(b => {
-                gameArea.removeChild(b);
-            });
-        }
-    }, 5000);
-    
+    await delay(5000);
+    if(ball.style.backgroundColor === activeColor.toLowerCase()){
+        score += 1;
+        createScore();
+        gameArea.removeChild(ball);
+        balls.pop();
+    } else {
+        isEnd = true;
+        balls.forEach(b => {
+            gameArea.removeChild(b);
+        });
+        writeOutEnd();
+    }
 }
 
 function getColorForBalls() {
@@ -168,23 +183,23 @@ function turnRight() {
         wheel.style.transform = `rotate(${activeDeg}deg)`;
     }, 0.1);
 }
-// TODO: fix weird animation when it has to do more than one turn
-// (Only the last animation is played)
-function calculateTurn(key){
+// TODO: fix this!
+async function calculateTurn(key){
     const index = validColors.indexOf(activeColor);
     const color = keybindings[key];
     const newIndex = validColors.indexOf(color);
     let indexDifference = (newIndex+index)%numberOfColors;
 
+    activeColor = color;
     while(indexDifference > 0){
         turnLeft();
         indexDifference--;
+        await delay(100);
     }
-    activeColor = color;
 }
 
 
-function handleKeyPress(e){
+async function handleKeyPress(e){
     const {key} = e;
     switch(key){
         case "ArrowRight":
@@ -197,6 +212,6 @@ function handleKeyPress(e){
             turnRight();
             break;
         default:
-            calculateTurn(key);
+            await calculateTurn(key);
     }
 }
