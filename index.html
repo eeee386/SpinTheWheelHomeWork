@@ -77,8 +77,8 @@
     const validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
     const form = document.getElementById("setupForm");
     const colorSelectWrapper = document.getElementById("colorSelectWrapper");
-    const numberOfColors = document.getElementById("numberOfColorInput");
-    numberOfColors.addEventListener("change", function(e){
+    const numberOfColorsInput = document.getElementById("numberOfColorInput");
+    numberOfColorsInput.addEventListener("change", function(e){
         const oldWrapper = document.getElementById("colorWrapper")
         if(oldWrapper){
             colorSelectWrapper.removeChild(oldWrapper)
@@ -132,7 +132,7 @@
         }
 
         const difficulty = document.getElementById("difficultySelector").value;
-        const numberOfColors = document.getElementById("numberOfColorInput").value;
+        const numberOfColors = numberOfColorInput.value;
         const keybindings = {};
         validColors.forEach(validColor => {
             const input = document.getElementById(`${validColor}Input`);
@@ -141,6 +141,7 @@
             }
         });
 
+        console.log(numberOfColors);
 
         const body = document.getElementsByTagName("body")[0];
         const title = document.getElementsByClassName("title")[0];
