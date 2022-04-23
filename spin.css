@@ -33,6 +33,10 @@ body{
     left: calc((var(--width)) / 2 - (var(--wheelDiameter) / 2))
 }
 
+
+
 #gate {
     height: 10px;
+    position: absolute;
+    top: calc((var(--height) - var(--wheelDiameter)));
 }

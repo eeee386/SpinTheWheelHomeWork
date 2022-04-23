@@ -11,11 +11,14 @@ let gate = null;
 
 // Gamehelper variables
 let activeColor = null;
+let difficulty = null;
 
-function setUpGameWorld() {
+
+function setUpGameWorld(pDifficulty, numberOfColors, keybindings) {
+    difficulty = pDifficulty;
     body = document.getElementsByTagName("body")[0];
     createGameArea();
-    createWheel();
+    createWheel(numberOfColors);
     createGate();
 }
 
@@ -25,10 +28,18 @@ function createGameArea() {
     body.appendChild(gameArea)
 }
 
-function createWheel(){
+function createWheel(numberOfColors){
     wheel = document.createElement("div");
     wheel.id = "wheel";
     gameArea.appendChild(wheel);
+    for(let i = 0; i < numberOfColors; i++){
+        const color = validColors[i]
+        const slice = document.createElement("div");
+        slice.id = `${color}Slice`;
+        slice.classList.add("slice");
+        slice.style.backgroundColor = color;
+        wheel.appendChild(slice);
+    }
 }
 
 function createGate(){

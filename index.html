@@ -14,7 +14,7 @@
         <label class="label">Select Difficulty (Changes the speed on the balls)</label>
         <div class="control">
             <div class="select">
-                <select>
+                <select id="difficultySelector">
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
@@ -41,7 +41,7 @@
     <div id="buttonWrapper">
         <div class="field">
             <div class="control">
-                <button id="submit-button" class="button is-link">Submit</button>
+                <button type="submit" id="submit-button" class="button is-link">Submit</button>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
         return vals[0] === vals[1]
     }
 
-    validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
+    const validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
     const form = document.getElementById("setupForm");
     const colorSelectWrapper = document.getElementById("colorSelectWrapper");
     const numberOfColors = document.getElementById("numberOfColorInput");
@@ -110,7 +110,8 @@
 
     const button = document.getElementById("submit-button");
     const buttonWrapper = document.getElementById("buttonWrapper");
-    button.addEventListener("click", function (e){
+    form.addEventListener("submit", function (e){
+        console.log(e.target);
         e.preventDefault();
 
         const numberOfColorInput = document.getElementById("numberOfColorInput");
@@ -129,11 +130,23 @@
             createErrorMessage("Either set all of the buttons or don't set any of them", setAllOrNoneErrorId, buttonWrapper);
             return;
         }
+
+        const difficulty = document.getElementById("difficultySelector").value;
+        const numberOfColors = document.getElementById("numberOfColorInput").value;
+        const keybindings = {};
+        validColors.forEach(validColor => {
+            const input = document.getElementById(`${validColor}Input`);
+            if(input){
+                keybindings[input.value] = validColor;
+            }
+        });
+
+
         const body = document.getElementsByTagName("body")[0];
         const title = document.getElementsByClassName("title")[0];
         body.removeChild(title);
         body.removeChild(form);
-        setUpGameWorld();
+        setUpGameWorld(difficulty, numberOfColors, keybindings);
     });
 
 </script>
