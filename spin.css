@@ -2,6 +2,8 @@
     --width: 400px;
     --height: calc(1.5*var(--width));
     --wheelDiameter: calc(0.5*var(--width));
+    --sliceWidth: 10px;
+    --centerWheelDiameter: calc(0.1*var(--wheelDiameter));
 }
 
 body{
@@ -33,7 +35,27 @@ body{
     left: calc((var(--width)) / 2 - (var(--wheelDiameter) / 2))
 }
 
+#centerWheel {
+    background-color: black;
+    border-radius: 50%;
+    position:relative;
+    width: var(--centerWheelDiameter);
+    height: var(--centerWheelDiameter);
+    top: calc(var(--height) - var(--centerWheelDiameter));
+    left: calc((var(--width)) / 2 - (var(--centerWheelDiameter) / 2))
+}
 
+.slice {
+    width: var(--sliceWidth);
+    margin: auto;
+    height: 100%;
+    position: absolute;
+    left: calc((var(--width)) / 2 - (var(--wheelDiameter) / 2) - (var(--sliceWidth)/ 2));
+}
+
+.slice .colored {
+    height: 50%;
+}
 
 #gate {
     height: 10px;

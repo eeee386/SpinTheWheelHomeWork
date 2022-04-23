@@ -1,13 +1,9 @@
-// Constants
-const gameAreaWidth = 400;
-const gameAreaHeight = 1.5*gameAreaWidth
-const wheelDiameter = 0.5*gameAreaWidth;
-
 // DOM elements
 let body = null;
 let gameArea = null;
 let wheel = null;
 let gate = null;
+let centerWheel = null;
 
 // Gamehelper variables
 let activeColor = null;
@@ -30,6 +26,8 @@ function createGameArea() {
 
 function createWheel(numberOfColors){
     wheel = document.createElement("div");
+    centerWheel = document.createElement("div");
+    centerWheel.id = "centerWheel";
     wheel.id = "wheel";
     gameArea.appendChild(wheel);
     for(let i = 0; i < numberOfColors; i++){
@@ -37,16 +35,19 @@ function createWheel(numberOfColors){
         const slice = document.createElement("div");
         slice.id = `${color}Slice`;
         slice.classList.add("slice");
-        slice.style.backgroundColor = color;
+        slice.style.transform = `rotate(${(360/numberOfColors)*i}deg)`;
+        const sliceColored = document.createElement("div");
+        sliceColored.classList.add("colored");
+        sliceColored.style.backgroundColor = color.toLowerCase();
+        slice.appendChild(sliceColored);
         wheel.appendChild(slice);
+        wheel.appendChild(centerWheel)
     }
 }
 
 function createGate(){
     gate = document.createElement("div");
     gate.id = "gate";
-    gate.style.width = "100%";
-    gate.style.top = `${gameAreaHeight-wheelDiameter}px`;
     gameArea.appendChild(gate);
 }
 
