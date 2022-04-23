@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sedon Attila MNANLK 2022 MultiMedia</title>
+    <script src="spinTheWheelLogic.js"></script>
+    <link rel="stylesheet" href="bulma/bulma.css">
+    <link rel="stylesheet" href="spin.css">
+</head>
+<body>
+<h1 class="title">Set up game</h1>
+<form id="setupForm">
+    <div class="field">
+        <label class="label">Select Difficulty (Changes the speed on the balls)</label>
+        <div class="control">
+            <div class="select">
+                <select>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div id="colorSelectWrapper">
+        <div class="field">
+            <label class="label">Number of colors (3-6)</label>
+            <div class="control">
+                <div class="select">
+                    <select id="numberOfColorInput">
+                        <option value="0">Select One</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <button id="submit-button" class="button is-link">Submit</button>
+        </div>
+    </div>
+</form>
+</body>
+<script>
+    validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
+    const form = document.getElementById("setupForm");
+    const colorSelectWrapper = document.getElementById("colorSelectWrapper");
+    const numberOfColors = document.getElementById("numberOfColorInput");
+    numberOfColors.addEventListener("change", function(e){
+        const oldWrapper = document.getElementById("colorWrapper")
+        if(oldWrapper){
+            colorSelectWrapper.removeChild(oldWrapper)
+        }
+        const wrapper = document.createElement("div");
+        wrapper.id = "colorWrapper";
+        const numberOfColorsValue = e.target.value;
+        for(let i = 0; i < parseInt(numberOfColorsValue); i++){
+            const input = document.createElement("div");
+            input.id = validColors[i];
+            input.classList.add("field");
+            input.innerHTML = `<label class="label">${validColors[i]}</label>
+                                 <div class="control">
+                                   <input class="input" type="text">
+                               </div>`
+            input.addEventListener("change", function (e){
+                let errorMessage = document.getElementById(`errorMessage${validColors[i]}`);
+                if (e.target.value.length !== 1){
+                    if(!errorMessage){
+                        errorMessage = document.createElement("p");
+                        errorMessage.id = `errorMessage${validColors[i]}`
+                        errorMessage.classList.add("help");
+                        errorMessage.classList.add("is-danger");
+                        errorMessage.innerText = "Choose only one letter"
+                        input.appendChild(errorMessage);
+                    }
+
+                } else {
+                    if (errorMessage){
+                        input.removeChild(errorMessage);
+                    }
+                }
+            })
+            wrapper.appendChild(input);
+        }
+        colorSelectWrapper.appendChild(wrapper);
+    })
+
+    const button = document.getElementById("submit-button");
+    button.addEventListener("click", function (){
+
+    });
+
+</script>
+</html>
