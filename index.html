@@ -112,19 +112,28 @@
     const buttonWrapper = document.getElementById("buttonWrapper");
     button.addEventListener("click", function (e){
         e.preventDefault();
+
         const numberOfColorInput = document.getElementById("numberOfColorInput");
         const colorSelectorErrorId = "colorSelectError";
         const setAllOrNoneErrorId = "setAllOrNoneError";
+
+        [colorSelectorErrorId, setAllOrNoneErrorId].forEach(e => {
+            removeErrorMessage(e, buttonWrapper);
+        });
+
         if(numberOfColorInput.value === "0"){
             createErrorMessage("You should choose how many colors you want", colorSelectorErrorId, buttonWrapper);
             return;
         } else if(!isAllOrNoneOfTheColorButtonInputSet()){
+            console.log("this is called");
             createErrorMessage("Either set all of the buttons or don't set any of them", setAllOrNoneErrorId, buttonWrapper);
             return;
-        } else {
-
         }
-        callThis();
+        const body = document.getElementsByTagName("body")[0];
+        const title = document.getElementsByClassName("title")[0];
+        body.removeChild(title);
+        body.removeChild(form);
+        setUpGameWorld();
     });
 
 </script>

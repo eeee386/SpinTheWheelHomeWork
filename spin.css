@@ -1,3 +1,9 @@
+:root {
+    --width: 400px;
+    --height: calc(1.5*var(--width));
+    --wheelDiameter: calc(0.5*var(--width));
+}
+
 body{
     margin: 20px;
 }
@@ -8,4 +14,25 @@ body{
 
 #submit-button {
     margin-top: 20px;
+}
+
+#gameArea {
+    width: var(--width);
+    height: var(--height);
+    background-color: black;
+    position: absolute;
+}
+
+#wheel {
+    background-color: white;
+    border-radius: 50%;
+    position:relative;
+    width: var(--wheelDiameter);
+    height: var(--wheelDiameter);
+    top: calc(var(--height) - var(--wheelDiameter));
+    left: calc((var(--width)) / 2 - (var(--wheelDiameter) / 2))
+}
+
+#gate {
+    height: 10px;
 }
