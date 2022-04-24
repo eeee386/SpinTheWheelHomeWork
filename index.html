@@ -11,6 +11,12 @@
 <h1 class="title">Set up game</h1>
 <form id="setupForm">
     <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+            <input id="nameInput" class="input" type="text" placeholder="Text input">
+        </div>
+    </div>
+    <div class="field">
         <label class="label">Select Difficulty (Changes the speed on the balls)</label>
         <div class="control">
             <div class="select">
@@ -46,8 +52,38 @@
         </div>
     </div>
 </form>
+<h1 id="highscoreTitle" class="title">Highscores</h1>
+<table class="table is-bordered" id="highscore">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody id="highscoreBody">
+
+    </tbody>
+</table>
 </body>
 <script>
+    function createHighScore(){
+        const items = { ...localStorage };
+        for (let name in items){
+            const row = document.createElement("tr");
+            row.classList.add("row");
+            const nameDiv = document.createElement("td");
+            nameDiv.innerText = name;
+            const scoreDiv = document.createElement("td");
+            scoreDiv.innerText = items[name];
+            row.appendChild(nameDiv);
+            row.appendChild(scoreDiv);
+            const highscoreBody = document.getElementById("highscoreBody");
+            highscoreBody.appendChild(row);
+        }
+    }
+
+    createHighScore();
+
     function createErrorMessage(message, id, elementToAppendTo){
         if(!document.getElementById("colorSelectError")) {
             const errorMessage = document.createElement("p");
@@ -115,8 +151,10 @@
         e.preventDefault();
 
         const numberOfColorInput = document.getElementById("numberOfColorInput");
+        const nameInput = document.getElementById("nameInput");
         const colorSelectorErrorId = "colorSelectError";
         const setAllOrNoneErrorId = "setAllOrNoneError";
+        const noNameErrorId = "noNameError";
 
         [colorSelectorErrorId, setAllOrNoneErrorId].forEach(e => {
             removeErrorMessage(e, buttonWrapper);
@@ -126,13 +164,16 @@
             createErrorMessage("You should choose how many colors you want", colorSelectorErrorId, buttonWrapper);
             return;
         } else if(!isAllOrNoneOfTheColorButtonInputSet()){
-            console.log("this is called");
             createErrorMessage("Either set all of the buttons or don't set any of them", setAllOrNoneErrorId, buttonWrapper);
+            return;
+        } else if(nameInput.value === "") {
+            createErrorMessage("Set a name", noNameErrorId, buttonWrapper);
             return;
         }
 
         const difficulty = document.getElementById("difficultySelector").value;
         const numberOfColors = numberOfColorInput.value;
+        const name = nameInput.value;
         const keybindings = {};
         validColors.forEach(validColor => {
             const input = document.getElementById(`${validColor}Input`);
@@ -141,13 +182,14 @@
             }
         });
 
-        console.log(numberOfColors);
-
         const body = document.getElementsByTagName("body")[0];
-        const title = document.getElementsByClassName("title")[0];
-        body.removeChild(title);
+        const titles = document.getElementsByClassName("title")[0];
+        const table = document.getElementById("highscore");
+        body.removeChild(titles[0]);
+        body.removeChild(titles[1]);
         body.removeChild(form);
-        setUpGameWorld(difficulty, numberOfColors, keybindings);
+        body.removeChild(table);
+        setUpGameWorld(difficulty, numberOfColors, keybindings, name);
     });
 
 </script>

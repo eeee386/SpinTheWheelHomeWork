@@ -38,11 +38,12 @@ function removeElementsByClass(className){
 }
 
 
-function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
+function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
     difficulty = pDifficulty;
     rotation = 360/pNumberOfColors;
     keybindings = pKeybindings;
     numberOfColors = pNumberOfColors;
+    name = pName;
     body = document.getElementsByTagName("body")[0];
     createGameArea();
     createWheel();
@@ -116,6 +117,7 @@ function handleEnd(){
     gameArea.appendChild(endText)
     endText.innerText = "Game over!";
     soundtrack.pause();
+    localStorage.setItem(name, score.toString());
 }
 
 async function createBalls() {
