@@ -6,6 +6,7 @@ let gate = null;
 let centerWheel = null;
 let scoreText = null;
 let endText = null;
+let soundtrack = null;
 
 // Gamehelper variables
 let activeColor = null;
@@ -28,8 +29,8 @@ const difficultyDict = {
     [difficultyEnum.MEDIUM]: {newBallInterval: 2000, travelTime: 4000},
     [difficultyEnum.HARD]: {newBallInterval: 1000, travelTime: 3000}
 };
-let soundtrack = null;
-let ballInterval = null;
+
+
 
 //https://www.pentarem.com/blog/how-to-use-settimeout-with-async-await-in-javascript/
 function delay(ms) {
@@ -67,7 +68,7 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
     soundtrack = new Audio("Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_.mp3");
     soundtrack.autoplay = true;
     soundtrack.play();
-    ballInterval = setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
+    setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
 }
 
 function createGameArea() {
@@ -180,6 +181,8 @@ async function createBalls() {
         calculateScore();
         createScore();
         gameArea.removeChild(ball);
+        const ballSoundEffect = new Audio("ball_landed.mp3");
+        ballSoundEffect.play();
     } else {
         removeElementsByClass("ball");
         handleEnd();
@@ -210,6 +213,8 @@ function getColorForBalls() {
 }
 
 async function turnLeft() {
+    const rotateSoundEffect = new Audio("rotate.mp3");
+    rotateSoundEffect.play();
     const index = validColors.indexOf(activeColor);
     const newIndex = (index+1)%numberOfColors;
     activeColor = validColors[newIndex];
@@ -222,6 +227,7 @@ async function turnLeft() {
         duration: 100,
         iterations: 1
     }
+    rotateSoundEffect.play();
     wheel.animate(move, timing);
     await delay(100);
     activeDeg -= rotation
@@ -229,6 +235,9 @@ async function turnLeft() {
 }
 
 async function turnRight() {
+    const rotateSoundEffect = new Audio("whoosh-6316.mp3");
+    rotateSoundEffect.play();
+
     const index = validColors.indexOf(activeColor);
     const newIndex = index-1 !== -1 ? index-1 : numberOfColors-1;
     activeColor = validColors[newIndex];
@@ -241,6 +250,7 @@ async function turnRight() {
         duration: 100,
         iterations: 1
     }
+    rotateSoundEffect.play();
     wheel.animate(move, timing);
     await delay(0.1);
     activeDeg += rotation
