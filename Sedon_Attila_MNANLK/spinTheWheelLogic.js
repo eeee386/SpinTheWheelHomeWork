@@ -9,6 +9,7 @@ let endText = null;
 let soundtrack = null;
 
 // Gamehelper variables
+const validColors = ["Red", "Green", "Blue", "Cyan", "Yellow", "Magenta"]
 let activeColor = null;
 let activeDeg = 0;
 let difficulty = null;
@@ -65,7 +66,7 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
     createScore();
     document.addEventListener("click", turnRight)
     document.addEventListener("keydown", handleKeyPress);
-    soundtrack = new Audio("Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_.mp3");
+    soundtrack = new Audio("Sedon_Attila_MNANLK/Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_.mp3");
     soundtrack.autoplay = true;
     soundtrack.play();
     setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
@@ -179,7 +180,7 @@ async function createBalls() {
         calculateScore();
         createScore();
         gameArea.removeChild(ball);
-        const ballSoundEffect = new Audio("ball_landed.mp3");
+        const ballSoundEffect = new Audio("Sedon_Attila_MNANLK/ball_landed.mp3");
         ballSoundEffect.play();
     } else {
         removeElementsByClass("ball");
@@ -211,7 +212,7 @@ function getColorForBalls() {
 }
 
 async function turnLeft() {
-    const rotateSoundEffect = new Audio("rotate.mp3");
+    const rotateSoundEffect = new Audio("Sedon_Attila_MNANLK/rotate.mp3");
     rotateSoundEffect.play();
     const index = validColors.indexOf(activeColor);
     const newIndex = (index+1)%numberOfColors;
@@ -233,7 +234,7 @@ async function turnLeft() {
 }
 
 async function turnRight() {
-    const rotateSoundEffect = new Audio("whoosh-6316.mp3");
+    const rotateSoundEffect = new Audio("Sedon_Attila_MNANLK/rotate.mp3");
     rotateSoundEffect.play();
 
     const index = validColors.indexOf(activeColor);
@@ -254,19 +255,6 @@ async function turnRight() {
     activeDeg += rotation
     wheel.style.transform = `rotate(${activeDeg}deg)`;
 }
-// TODO: fix this!
-function calculateTurn(key){
-    const index = validColors.indexOf(activeColor);
-    const color = keybindings[key];
-    const newIndex = validColors.indexOf(color);
-    let indexDifference = (newIndex+index)%numberOfColors;
-
-    activeColor = color;
-    while(indexDifference > 0){
-        turnLeft();
-        indexDifference--;
-    }
-}
 
 
 async function handleKeyPress(e){
@@ -281,7 +269,5 @@ async function handleKeyPress(e){
         case " ":
             turnRight();
             break;
-        default:
-            await calculateTurn(key);
     }
 }
