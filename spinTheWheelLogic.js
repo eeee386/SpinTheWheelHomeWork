@@ -16,13 +16,20 @@ let numberOfColors = 0;
 let score =0;
 let keybindings = null;
 let isEnd = false;
+let isReset = false;
 let name = null;
+const difficultyEnum = {
+    EASY: "easy",
+    MEDIUM: "medium",
+    HARD: "hard",
+};
 const difficultyDict = {
-    easy: {newBallInterval: 3000, travelTime: 5000},
-    medium: {newBallInterval: 2000, travelTime: 4000},
-    hard: {newBallInterval: 1000, travelTime: 3000}
+    [difficultyEnum.EASY]: {newBallInterval: 3000, travelTime: 5000},
+    [difficultyEnum.MEDIUM]: {newBallInterval: 2000, travelTime: 4000},
+    [difficultyEnum.HARD]: {newBallInterval: 1000, travelTime: 3000}
 };
 let soundtrack = null;
+let ballInterval = null;
 
 //https://www.pentarem.com/blog/how-to-use-settimeout-with-async-await-in-javascript/
 function delay(ms) {
@@ -39,6 +46,12 @@ function removeElementsByClass(className){
 
 
 function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
+    activeColor = validColors[0];
+    activeDeg = 0;
+    isEnd = false;
+    score = 0;
+
+    // Setup new game
     difficulty = pDifficulty;
     rotation = 360/pNumberOfColors;
     keybindings = pKeybindings;
@@ -49,17 +62,12 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
     createWheel();
     createGate();
     createScore();
-    activeColor = validColors[0];
-    document.addEventListener("click", function (e){
-        turnRight();
-    })
-    document.addEventListener("keydown", function (e){
-        handleKeyPress(e);
-    });
+    document.addEventListener("click", turnRight)
+    document.addEventListener("keydown", handleKeyPress);
     soundtrack = new Audio("Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_.mp3");
     soundtrack.autoplay = true;
     soundtrack.play();
-    setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
+    ballInterval = setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
 }
 
 function createGameArea() {
@@ -74,6 +82,7 @@ function createWheel(){
     centerWheel.id = "centerWheel";
     wheel.id = "wheel";
     gameArea.appendChild(wheel);
+
     // Create a full height pole for every color
     // Position them so that it would slice the wheel in half
     // Rotate them in the right angle
@@ -100,6 +109,16 @@ function createGate(){
     gameArea.appendChild(gate);
 }
 
+function createButton(name, handler){
+    const button = document.createElement("button");
+    button.classList.add("button");
+    button.innerText = name;
+    button.addEventListener("click", function (e){
+        handler();
+    });
+    gameArea.appendChild(button);
+}
+
 function createScore() {
     scoreText = document.getElementById("score")
     if(scoreText){
@@ -112,12 +131,23 @@ function createScore() {
 }
 
 function handleEnd(){
+    isEnd = true;
+
     endText = document.createElement("div");
     endText.id = "end";
     gameArea.appendChild(endText)
     endText.innerText = "Game over!";
+    createButton("Go back", () => {
+        window.location.reload();
+    });
+    document.removeEventListener("click", turnRight)
+    document.removeEventListener("keydown", handleKeyPress);
+
     soundtrack.pause();
-    localStorage.setItem(name, score.toString());
+    const lastScore = localStorage.getItem(name);
+    if(parseInt(lastScore) < score){
+        localStorage.setItem(name, score.toString());
+    }
 }
 
 async function createBalls() {
@@ -147,13 +177,24 @@ async function createBalls() {
         return;
     }
     if(ball.style.backgroundColor === activeColor.toLowerCase()){
-        score += 1;
+        calculateScore();
         createScore();
         gameArea.removeChild(ball);
     } else {
-        isEnd = true;
         removeElementsByClass("ball");
         handleEnd();
+    }
+}
+
+function calculateScore() {
+    score += 1;
+    if (numberOfColors > 3){
+        score += numberOfColors - 3;
+    }
+    if (difficulty === difficultyEnum.MEDIUM){
+        score += 1
+    } else if (difficulty === difficultyEnum.HARD) {
+        score += 2;
     }
 }
 

@@ -183,10 +183,10 @@
         });
 
         const body = document.getElementsByTagName("body")[0];
-        const titles = document.getElementsByClassName("title")[0];
+        const titles = document.getElementsByClassName("title");
         const table = document.getElementById("highscore");
-        body.removeChild(titles[0]);
         body.removeChild(titles[1]);
+        body.removeChild(titles[0]);
         body.removeChild(form);
         body.removeChild(table);
         setUpGameWorld(difficulty, numberOfColors, keybindings, name);
