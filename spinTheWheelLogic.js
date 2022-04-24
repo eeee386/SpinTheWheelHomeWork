@@ -4,7 +4,6 @@ let gameArea = null;
 let wheel = null;
 let gate = null;
 let centerWheel = null;
-let balls = [];
 let scoreText = null;
 let endText = null;
 
@@ -17,10 +16,23 @@ let numberOfColors = 0;
 let score =0;
 let keybindings = null;
 let isEnd = false;
+const difficultyDict = {
+    easy: {newBallInterval: 3000, travelTime: 5000},
+    medium: {newBallInterval: 2000, travelTime: 4000},
+    hard: {newBallInterval: 1000, travelTime: 3000}
+};
 
 //https://www.pentarem.com/blog/how-to-use-settimeout-with-async-await-in-javascript/
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//https://stackoverflow.com/questions/4777077/removing-elements-by-class-name
+function removeElementsByClass(className){
+    const elements = document.getElementsByClassName(className);
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
 }
 
 
@@ -31,7 +43,7 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
     numberOfColors = pNumberOfColors;
     body = document.getElementsByTagName("body")[0];
     createGameArea();
-    createWheel(numberOfColors);
+    createWheel();
     createGate();
     createScore();
     activeColor = validColors[0];
@@ -41,7 +53,7 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
     document.addEventListener("keydown", function (e){
         handleKeyPress(e);
     });
-    setInterval(createBalls, 3000);
+    setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
 }
 
 function createGameArea() {
@@ -98,7 +110,6 @@ function writeOutEnd(){
     endText.id = "end";
     gameArea.appendChild(endText)
     endText.innerText = "Game over!";
-
 }
 
 async function createBalls() {
@@ -111,29 +122,29 @@ async function createBalls() {
     // Here we use that the body has no padding or margin
     const gateRect = gate.getBoundingClientRect();
     gameArea.appendChild(ball);
-    balls.push(ball);
     const ballRect = ball.getBoundingClientRect();
     const move = [
         {top: "0px"},
         {top: `${gateRect.y-ballRect.height}px`}
     ];
     const timing = {
-        duration: 5000,
+        duration: difficultyDict[difficulty].travelTime,
         iterations: 1,
     }
-    console.log(ballRect);
     ball.animate(move, timing);
-    await delay(5000);
+    await delay(difficultyDict[difficulty].travelTime);
+    // If this is not here game over duplicates because multiple instances of the
+    // function is running because of the interval and delay
+    if(isEnd){
+        return;
+    }
     if(ball.style.backgroundColor === activeColor.toLowerCase()){
         score += 1;
         createScore();
         gameArea.removeChild(ball);
-        balls.pop();
     } else {
         isEnd = true;
-        balls.forEach(b => {
-            gameArea.removeChild(b);
-        });
+        removeElementsByClass("ball");
         writeOutEnd();
     }
 }
@@ -149,7 +160,11 @@ function getColorForBalls() {
     return validColors[colorIndex];
 }
 
-function turnLeft() {
+async function turnLeft() {
+    const index = validColors.indexOf(activeColor);
+    const newIndex = (index+1)%numberOfColors;
+    activeColor = validColors[newIndex];
+
     const move = [
         {transform: `rotate(${activeDeg}deg)`},
         {transform: `rotate(${activeDeg-rotation}deg)`}
@@ -159,15 +174,16 @@ function turnLeft() {
         iterations: 1
     }
     wheel.animate(move, timing);
-
-    setTimeout(function (){
-        activeDeg -= rotation
-        wheel.style.transform = `rotate(${activeDeg}deg)`;
-    }, 0.1);
-
+    await delay(100);
+    activeDeg -= rotation
+    wheel.style.transform = `rotate(${activeDeg}deg)`;
 }
 
-function turnRight() {
+async function turnRight() {
+    const index = validColors.indexOf(activeColor);
+    const newIndex = index-1 !== -1 ? index-1 : numberOfColors-1;
+    activeColor = validColors[newIndex];
+
     const move = [
         {transform: `rotate(${activeDeg}deg)`},
         {transform: `rotate(${activeDeg+rotation}deg)`}
@@ -177,14 +193,12 @@ function turnRight() {
         iterations: 1
     }
     wheel.animate(move, timing);
-
-    setTimeout(function (){
-        activeDeg += rotation
-        wheel.style.transform = `rotate(${activeDeg}deg)`;
-    }, 0.1);
+    await delay(0.1);
+    activeDeg += rotation
+    wheel.style.transform = `rotate(${activeDeg}deg)`;
 }
 // TODO: fix this!
-async function calculateTurn(key){
+function calculateTurn(key){
     const index = validColors.indexOf(activeColor);
     const color = keybindings[key];
     const newIndex = validColors.indexOf(color);
@@ -194,7 +208,6 @@ async function calculateTurn(key){
     while(indexDifference > 0){
         turnLeft();
         indexDifference--;
-        await delay(100);
     }
 }
 
