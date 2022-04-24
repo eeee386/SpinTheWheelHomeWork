@@ -16,11 +16,13 @@ let numberOfColors = 0;
 let score =0;
 let keybindings = null;
 let isEnd = false;
+let name = null;
 const difficultyDict = {
     easy: {newBallInterval: 3000, travelTime: 5000},
     medium: {newBallInterval: 2000, travelTime: 4000},
     hard: {newBallInterval: 1000, travelTime: 3000}
 };
+let soundtrack = null;
 
 //https://www.pentarem.com/blog/how-to-use-settimeout-with-async-await-in-javascript/
 function delay(ms) {
@@ -53,6 +55,9 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings) {
     document.addEventListener("keydown", function (e){
         handleKeyPress(e);
     });
+    soundtrack = new Audio("Loyalty_Freak_Music_-_04_-_Cant_Stop_My_Feet_.mp3");
+    soundtrack.autoplay = true;
+    soundtrack.play();
     setInterval(createBalls, difficultyDict[difficulty].newBallInterval);
 }
 
@@ -105,11 +110,12 @@ function createScore() {
     scoreText.innerText = score;
 }
 
-function writeOutEnd(){
+function handleEnd(){
     endText = document.createElement("div");
     endText.id = "end";
     gameArea.appendChild(endText)
     endText.innerText = "Game over!";
+    soundtrack.pause();
 }
 
 async function createBalls() {
@@ -145,7 +151,7 @@ async function createBalls() {
     } else {
         isEnd = true;
         removeElementsByClass("ball");
-        writeOutEnd();
+        handleEnd();
     }
 }
 

@@ -69,3 +69,11 @@
     position: absolute;
     top: calc((var(--height) - var(--wheelDiameter)));
 }
+
+#score {
+    color: white;
+}
+
+#end {
+    color: red;
+}
