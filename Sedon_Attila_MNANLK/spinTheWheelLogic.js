@@ -114,9 +114,7 @@ function createButton(name, handler){
     const button = document.createElement("button");
     button.classList.add("button");
     button.innerText = name;
-    button.addEventListener("click", function (e){
-        handler();
-    });
+    button.addEventListener("click", handler);
     gameArea.appendChild(button);
 }
 
