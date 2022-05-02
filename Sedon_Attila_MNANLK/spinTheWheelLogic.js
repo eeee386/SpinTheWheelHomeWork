@@ -47,7 +47,7 @@ function removeElementsByClass(className){
 }
 
 
-function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
+function setUpGameWorld(pDifficulty, pNumberOfColors, pName) {
     activeColor = validColors[0];
     activeDeg = 0;
     isEnd = false;
@@ -56,7 +56,6 @@ function setUpGameWorld(pDifficulty, pNumberOfColors, pKeybindings, pName) {
     // Setup new game
     difficulty = pDifficulty;
     rotation = 360/pNumberOfColors;
-    keybindings = pKeybindings;
     numberOfColors = pNumberOfColors;
     name = pName;
     body = document.getElementsByTagName("body")[0];
@@ -145,7 +144,7 @@ function handleEnd(){
 
     soundtrack.pause();
     const lastScore = localStorage.getItem(name);
-    if(parseInt(lastScore) < score){
+    if(parseInt(lastScore) < score || lastScore === null){
         localStorage.setItem(name, score.toString());
     }
 }
